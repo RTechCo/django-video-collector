@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Video
 from .forms import VideoForm, SearchForm
 from django.contrib import messages 
@@ -34,16 +34,22 @@ def add(request):
     
 
 def video_list(request):
-
     search_form = SearchForm(request.GET)
 
     if search_form.is_valid():
         search_term = search_form.cleaned_data['search_term']
         videos = Video.objects.filter(name__icontains=search_term).order_by(Lower('name'))
-
     else:
         search_form = SearchForm()
         videos = Video.objects.order_by(Lower('name'))
 
-    return render(request, 'video_collection/video_list.html', {'videos': videos, 'search_form': search_form})
+    return render(request, 'video_collection/video_list.html', {
+        'videos': videos,
+        'search_form': search_form,
+    })
 
+
+def video_detail(request, video_pk):
+    # Put your own comment about the video lookup and the 404 here.
+    video = get_object_or_404(Video, pk=video_pk)
+    return render(request, 'video_collection/video_detail.html', {'video': video})

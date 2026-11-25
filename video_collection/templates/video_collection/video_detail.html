@@ -1,0 +1,13 @@
+{% extends 'video_collection/base.html' %}
+
+{% block content %} {# Display the fields for one video. The view passes the saved record to this template as "video". #}}
+
+<h2>{{ video.name }}</h2>
+
+<p>Database ID: {{ video.pk }}</p>
+<p>YouTube ID: {{ video.video_id }}</p>
+<p>YouTube URL: <a href="{{ video.url }}">{{ video.url }}</a></p>
+<p>Notes: {{ video.notes|default:"No notes." }}</p>
+
+<p><a href="{% url 'video_list' %}">Back to video list</a></p>
+{% endblock %}

@@ -429,4 +429,27 @@ class TestVideoModel(TestCase):
         Video.objects.create(name='example', url='https://www.youtube.com/watch?v=IODxDxX7oi4')
         with self.assertRaises(IntegrityError):
             Video.objects.create(name='example', url='https://www.youtube.com/watch?v=IODxDxX7oi4')
-        
+
+
+class TestVideoDetail(TestCase):
+    def test_detail_shows_video_information(self):
+        video = Video.objects.create(
+            name='Morning stretches',
+            url='https://www.youtube.com/watch?v=4vTJHUDB5ak',
+            notes='A short routine for my shoulders.',
+        )
+        url = reverse('video_detail', args=[video.pk])
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, video.name)
+        self.assertContains(response, video.notes)
+        self.assertContains(response, video.url)
+        self.assertContains(response, f'Database ID: {video.pk}')
+        self.assertContains(response, f'YouTube ID: {video.video_id}')
+
+    def test_missing_video_returns_404(self):
+        url = reverse('video_detail', args=[99999])
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 404)
